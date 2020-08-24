@@ -129,7 +129,7 @@
         <image name="location.circle.fill" catalog="system" width="128" height="121"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <namedColor name="bgTint">
-            <color red="0.1126378104" green="0.29932048919999998" blue="0.32302445169999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.11299999803304672" green="0.29899999499320984" blue="0.32300001382827759" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
