@@ -10,10 +10,11 @@ import Foundation
 
 class WeatherManager {
     
-    let weatherUrl = "https://jsonplaceholder.typicode.com/todos/1"
+    let apiKey = "fd2d0fff71ee3c5afb66bbfc822758d8"
+    let weatherUrl = "https://api.openweathermap.org/data/2.5/weather"
         
     func fetchWeather(city: String) {
-        if let url = URL(string: weatherUrl) {
+        if let url = URL(string: "\(weatherUrl)?q=\(city)&appid=\(apiKey)&units=metric") {
             
             let session = URLSession(configuration: .default)
             
@@ -25,12 +26,13 @@ class WeatherManager {
     
     func handleResponse(data: Data?, respomse: URLResponse?, error: Error?) {
         if error != nil {
-            print(error)
+            print(error!)
             return
         }
         
         if let safeData = data {
-            print(String(data: safeData, encoding: .utf8))
+            let dataStr = String(data: safeData, encoding: .utf8)
+            print(dataStr)
         }
         
     }
