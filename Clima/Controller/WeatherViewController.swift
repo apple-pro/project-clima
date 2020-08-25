@@ -49,7 +49,11 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         
         print(text)
         
-        weatherManager.fetchWeather(city: text)
+        weatherManager.fetchWeather(city: text) { (weatherData, error) in
+            if let w = weatherData {
+                print("\(w)")
+            }
+        }
     }
     
 }

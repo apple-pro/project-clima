@@ -13,7 +13,7 @@ class WeatherManager {
     let apiKey = "fd2d0fff71ee3c5afb66bbfc822758d8"
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather"
     
-    func fetchWeather(city: String) {
+    func fetchWeather(city: String, resultHandler: @escaping (Weather?, Error?) -> Void) {
         if let url = URL(string: "\(weatherUrl)?q=\(city)&appid=\(apiKey)&units=metric") {
             
             let session = URLSession(configuration: .default)
@@ -25,7 +25,13 @@ class WeatherManager {
                 }
                 
                 if let safeData = data {
-                    self.parseJSON(weatherData: safeData)
+                    let result = self.parseJSON(weatherData: safeData)
+                    
+                    if let sw = result.0 {
+                        resultHandler(Weather(city: sw.name, temp: sw.main.temp, icon: "cloud"), nil)
+                    } else {
+                        resultHandler(nil, result.1)
+                    }
                 }
                 
             }
@@ -34,30 +40,38 @@ class WeatherManager {
         }
     }
     
-    func parseJSON(weatherData: Data) {
+    func parseJSON(weatherData: Data) -> (WeatherResultJson?, Error?) {
         let decoder = JSONDecoder()
         do {
-            let decoded = try decoder.decode(WeatherData.self, from: weatherData)
+            let decoded = try decoder.decode(WeatherResultJson.self, from: weatherData)
             print("result: \(decoded)")
+            return (decoded, nil)
         } catch {
             print(error)
+            return (nil, error)
         }
     }
     
 }
 
-struct WeatherData: Decodable {
-    let name: String
-    let main: Main
-    let weather: [Weather]
+struct Weather {
+    let city: String
+    let temp: Float
+    let icon: String
 }
 
-struct Main: Decodable {
+struct WeatherResultJson: Decodable {
+    let name: String
+    let main: MainJson
+    let weather: [WeatherJson]
+}
+
+struct MainJson: Decodable {
     let temp: Float
 }
 
 
-struct Weather: Decodable {
+struct WeatherJson: Decodable {
     let id: Int
     let description: String
 }
