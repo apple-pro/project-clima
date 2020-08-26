@@ -51,7 +51,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         
         weatherManager.fetchWeather(city: text) { (weatherData, error) in
             if let w = weatherData {
-                print("\(w)")
+                DispatchQueue.main.async {
+                    self.cityLabel.text = w.city
+                    self.temperatureLabel.text = String(format: "%.1f", w.temp)
+                }
             }
         }
     }
