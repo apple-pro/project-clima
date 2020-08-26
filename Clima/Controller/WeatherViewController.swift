@@ -53,7 +53,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
             if let w = weatherData {
                 DispatchQueue.main.async {
                     self.cityLabel.text = w.city
-                    self.temperatureLabel.text = String(format: "%.1f", w.temp)
+                    self.temperatureLabel.text = w.temp.fancy()
                 }
             }
         }

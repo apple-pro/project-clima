@@ -8,6 +8,14 @@
 
 import Foundation
 
+typealias Temperature = Float
+
+extension Temperature {
+    func fancy() -> String {
+        return String(format: "%.1f", self)
+    }
+}
+
 class WeatherManager {
     
     let apiKey = "fd2d0fff71ee3c5afb66bbfc822758d8"
@@ -56,7 +64,7 @@ class WeatherManager {
 
 struct Weather {
     let city: String
-    let temp: Float
+    let temp: Temperature
     let icon: String
 }
 
