@@ -23,7 +23,25 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         
         searchTextField.delegate = self
+        
         locationManager.requestWhenInUseAuthorization()
+        locationManager.delegate = self
+        locationManager.requestLocation()
+    }
+}
+
+//MARK: - CLLocationManagerDelegate
+
+extension WeatherViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let lastLocation = locations.last {
+            print("Location: \(lastLocation.coordinate)")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location Error")
     }
 }
 
@@ -62,6 +80,7 @@ extension WeatherViewController: UITextFieldDelegate {
                 DispatchQueue.main.async {
                     self.cityLabel.text = w.city
                     self.temperatureLabel.text = w.temp.fancy()
+                    self.conditionImageView.image = UIImage(systemName: w.icon)
                 }
             }
         }

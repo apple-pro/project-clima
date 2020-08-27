@@ -36,7 +36,7 @@ class WeatherManager {
                     let result = self.parseJSON(weatherData: safeData)
                     
                     if let sw = result.0 {
-                        resultHandler(Weather(city: sw.name, temp: sw.main.temp, icon: "cloud"), nil)
+                        resultHandler(Weather(city: sw.name, temp: sw.main.temp, weatherConditionId: sw.weather[0].id), nil)
                     } else {
                         resultHandler(nil, result.1)
                     }
@@ -65,7 +65,30 @@ class WeatherManager {
 struct Weather {
     let city: String
     let temp: Temperature
-    let icon: String
+    let weatherConditionId: Int
+    
+    var icon: String {
+        get {
+            switch weatherConditionId {
+            case 200...232:
+                return "cloud.bolt"
+            case 300...321:
+                return "cloud.drizzle"
+            case 500...531:
+                return "cloud.rain"
+            case 600...622:
+                return "cloud.snow"
+            case 701...781:
+                return "cloud.fog"
+            case 800:
+                return "sun.max"
+            case 801...804:
+                return "cloud.bolt"
+            default:
+                return "cloud"
+            }
+        }
+    }
 }
 
 struct WeatherResultJson: Decodable {
