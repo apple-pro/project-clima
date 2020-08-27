@@ -21,14 +21,16 @@ class WeatherManager {
     let apiKey = "fd2d0fff71ee3c5afb66bbfc822758d8"
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather"
     
-    func fetchWeather(city: String, resultHandler: @escaping (Weather?, Error?) -> Void) {
+    var delegate: WeatherManagerDelegate?
+    
+    func fetchWeather(byCity city: String) {
         if let url = URL(string: "\(weatherUrl)?q=\(city)&appid=\(apiKey)&units=metric") {
             
             let session = URLSession(configuration: .default)
             
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
-                    print(error!)
+                    self.delegate?.weatherManagerDidCreateError(weatherManager: self, error: error!)
                     return
                 }
                 
@@ -36,9 +38,10 @@ class WeatherManager {
                     let result = self.parseJSON(weatherData: safeData)
                     
                     if let sw = result.0 {
-                        resultHandler(Weather(city: sw.name, temp: sw.main.temp, weatherConditionId: sw.weather[0].id), nil)
+                        let weather = Weather(city: sw.name, temp: sw.main.temp, weatherConditionId: sw.weather[0].id)
+                        self.delegate?.weatherManagerDidUpdate(weatherManager: self, weather: weather)
                     } else {
-                        resultHandler(nil, result.1)
+                        self.delegate?.weatherManagerDidCreateError(weatherManager: self, error: result.1!)
                     }
                 }
                 
@@ -60,6 +63,11 @@ class WeatherManager {
         }
     }
     
+}
+
+protocol WeatherManagerDelegate {
+    func weatherManagerDidUpdate(weatherManager: WeatherManager, weather: Weather)
+    func weatherManagerDidCreateError(weatherManager: WeatherManager, error: Error)
 }
 
 struct Weather {

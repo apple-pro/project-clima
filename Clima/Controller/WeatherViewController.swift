@@ -23,10 +23,28 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         
         searchTextField.delegate = self
+        weatherManager.delegate = self
         
         locationManager.requestWhenInUseAuthorization()
         locationManager.delegate = self
         locationManager.requestLocation()
+    }
+}
+
+//MARK: - WeatherManagerDelegate
+
+extension WeatherViewController: WeatherManagerDelegate {
+    
+    func weatherManagerDidUpdate(weatherManager: WeatherManager, weather: Weather) {
+        DispatchQueue.main.async {
+            self.cityLabel.text = weather.city
+            self.temperatureLabel.text = weather.temp.fancy()
+            self.conditionImageView.image = UIImage(systemName: weather.icon)
+        }
+    }
+    
+    func weatherManagerDidCreateError(weatherManager: WeatherManager, error: Error) {
+        print(error)
     }
 }
 
@@ -75,15 +93,7 @@ extension WeatherViewController: UITextFieldDelegate {
         
         print(text)
         
-        weatherManager.fetchWeather(city: text) { (weatherData, error) in
-            if let w = weatherData {
-                DispatchQueue.main.async {
-                    self.cityLabel.text = w.city
-                    self.temperatureLabel.text = w.temp.fancy()
-                    self.conditionImageView.image = UIImage(systemName: w.icon)
-                }
-            }
-        }
+        weatherManager.fetchWeather(byCity: text)
     }
 }
 
