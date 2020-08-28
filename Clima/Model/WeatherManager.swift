@@ -9,6 +9,8 @@
 import Foundation
 
 typealias Temperature = Float
+typealias Lat = Double
+typealias Lon = Double
 
 extension Temperature {
     func fancy() -> String {
@@ -24,7 +26,17 @@ class WeatherManager {
     var delegate: WeatherManagerDelegate?
     
     func fetchWeather(byCity city: String) {
-        if let url = URL(string: "\(weatherUrl)?q=\(city)&appid=\(apiKey)&units=metric") {
+        let urlString = "\(weatherUrl)?q=\(city)&appid=\(apiKey)&units=metric"
+        fetchWeather(byUrlString: urlString)
+    }
+    
+    func fetchWeather(byLat lat: Lat, andLon lon: Lon) {
+        let urlString = "\(weatherUrl)?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric"
+        fetchWeather(byUrlString: urlString)
+    }
+    
+    private func fetchWeather(byUrlString urlStr: String) {
+        if let url = URL(string: urlStr) {
             
             let session = URLSession(configuration: .default)
             
@@ -51,7 +63,7 @@ class WeatherManager {
         }
     }
     
-    func parseJSON(weatherData: Data) -> (WeatherResultJson?, Error?) {
+    private func parseJSON(weatherData: Data) -> (WeatherResultJson?, Error?) {
         let decoder = JSONDecoder()
         do {
             let decoded = try decoder.decode(WeatherResultJson.self, from: weatherData)

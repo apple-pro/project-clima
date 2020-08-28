@@ -24,9 +24,11 @@ class WeatherViewController: UIViewController {
         
         searchTextField.delegate = self
         weatherManager.delegate = self
-        
-        locationManager.requestWhenInUseAuthorization()
         locationManager.delegate = self
+    }
+    
+    @IBAction func pressLocationButton(_ sender: UIButton) {
+        locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
     }
 }
@@ -55,6 +57,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let lastLocation = locations.last {
             print("Location: \(lastLocation.coordinate)")
+            weatherManager.fetchWeather(byLat: lastLocation.coordinate.latitude, andLon: lastLocation.coordinate.longitude)
         }
     }
     
